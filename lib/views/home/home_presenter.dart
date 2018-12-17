@@ -1,5 +1,5 @@
 import 'package:flutter_mvp/di/injection.dart';
-import 'package:flutter_mvp/repository/contacts_repository.dart';
+import 'package:flutter_mvp/repository/users_repository.dart';
 import 'package:flutter_mvp/views/home/home_contact.dart';
 
 class HomePresenter {
@@ -10,11 +10,11 @@ class HomePresenter {
     _contactsRepository = new Injector().contactsRepository;
   }
 
-  void loadContacts() {
+  void loadUsers(int page) {
     if (null == _view) return;
 
     _contactsRepository
-        .fetchContacts()
+        .fetchUsers(page)
         .then((contacts) => _view.onContactsReceived(contacts))
         .catchError((onError) {
       print(onError);

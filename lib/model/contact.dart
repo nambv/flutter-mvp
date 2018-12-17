@@ -1,49 +1,28 @@
-class Contact {
-  final String fullName;
-  final String gender;
-  final String email;
-  final String imageUrl;
-  final String birthday;
-  final Location location;
-  final List<Phone> phones;
+class User {
+  int id;
+  String firstName;
+  String lastName;
+  String avatar;
 
-  const Contact(
-      {this.fullName,
-      this.gender,
-      this.email,
-      this.imageUrl,
-      this.birthday,
-      this.location,
-      this.phones});
+  User({this.id, this.firstName, this.lastName, this.avatar});
 
-  Contact.fromMap(Map<String, dynamic> map)
-      : fullName = "${map['name']['first']} ${map['name']['last']}",
-        gender = map['gender'],
-        email = map['email'],
-        imageUrl = map['picture']['large'],
-        birthday = "Birthday ${map['dob']}",
-        location = new Location.fromMap(map['location']),
-        phones = <Phone>[
-          new Phone(type: 'Home', number: map['phone']),
-          new Phone(type: 'Mobile', number: map['cell'])
-        ];
-}
+  User.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    firstName = json['first_name'];
+    lastName = json['last_name'];
+    avatar = json['avatar'];
+  }
 
-class Location {
-  final String street;
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['first_name'] = this.firstName;
+    data['last_name'] = this.lastName;
+    data['avatar'] = this.avatar;
+    return data;
+  }
 
-  final String city;
-
-  const Location({this.street, this.city});
-
-  Location.fromMap(Map<String, dynamic> map)
-      : street = map['street'],
-        city = map['city'];
-}
-
-class Phone {
-  final String type;
-  final String number;
-
-  const Phone({this.type, this.number});
+  String getFullName() {
+    return "$firstName $lastName";
+  }
 }

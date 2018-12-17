@@ -1,4 +1,4 @@
-import 'package:flutter_mvp/repository/contacts_repository.dart';
+import 'package:flutter_mvp/repository/users_repository.dart';
 import 'package:flutter_mvp/views/login/login_contract.dart';
 
 class LoginPresenter {
@@ -14,7 +14,7 @@ class LoginPresenter {
         .login(email, password)
         .then((_) => _view.onLoginSuccess())
         .catchError((onError) {
-      print(onError.toString());
+      // TODO: Handle onError exception
       _view.showError(onError.toString());
     });
   }

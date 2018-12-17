@@ -9,7 +9,30 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: Text('Home')), body: ContactList());
+    return Scaffold(
+        appBar: AppBar(title: Text('Home')),
+        drawer: createDrawerWidget(context),
+        body: ContactList());
+  }
+
+  Drawer createDrawerWidget(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          DrawerHeader(
+            child: Text('Drawer Header'),
+            decoration: BoxDecoration(color: Colors.blue),
+          ),
+          ListTile(
+            title: Text('Logout'),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          )
+        ],
+      ),
+    );
   }
 }
 
@@ -22,7 +45,8 @@ class ContactList extends StatefulWidget {
 
 class ContactListState extends State<ContactList> implements HomeContact {
   HomePresenter _presenter;
-  List<Contact> _contacts;
+  int page;
+  List<User> _contacts;
   bool _isLoading = false;
 
   ContactListState() {
@@ -32,8 +56,9 @@ class ContactListState extends State<ContactList> implements HomeContact {
   @override
   void initState() {
     super.initState();
+    page = 1;
     _isLoading = true;
-    _presenter.loadContacts();
+    _presenter.loadUsers(page);
   }
 
   @override
@@ -60,7 +85,7 @@ class ContactListState extends State<ContactList> implements HomeContact {
     return _contacts.map((contact) => new ContactItem(
           contact: contact,
           onTap: () {
-            print("Item clicked: ${contact.imageUrl}");
+            print("Item clicked: ${contact.avatar}");
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => Detail(contact)));
           },
@@ -68,7 +93,7 @@ class ContactListState extends State<ContactList> implements HomeContact {
   }
 
   @override
-  void onContactsReceived(List<Contact> contacts) {
+  void onContactsReceived(List<User> contacts) {
     setState(() {
       _contacts = contacts;
       _isLoading = false;
@@ -82,16 +107,16 @@ class ContactListState extends State<ContactList> implements HomeContact {
 }
 
 class ContactItem extends ListTile {
-  ContactItem({Contact contact, GestureTapCallback onTap})
+  ContactItem({User contact, GestureTapCallback onTap})
       : super(
-            title: new Text(contact.fullName),
-            subtitle: new Text(contact.email),
+            title: new Text(contact.getFullName()),
+            subtitle: new Text(contact.id.toString()),
             leading: new Container(
                 width: 60.0,
                 height: 60.0,
                 decoration: new BoxDecoration(
                   image: new DecorationImage(
-                      image: NetworkImage(contact.imageUrl), fit: BoxFit.cover),
+                      image: NetworkImage(contact.avatar), fit: BoxFit.cover),
                   borderRadius: new BorderRadius.all(new Radius.circular(50.0)),
                   border: new Border.all(
                     color: Colors.red,

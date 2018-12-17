@@ -7,18 +7,17 @@ import 'package:flutter_mvp/util/request_exception.dart';
 import 'package:http/http.dart' as http;
 
 abstract class ContactsRepository {
-  Future<List<Contact>> fetchContacts();
-
+  Future<List<User>> fetchUsers(int page);
   Future<void> login(String email, String password);
 }
 
 class ContactRepositoryImpl implements ContactsRepository {
-  static const url = 'http://api.randomuser.me/?results=15';
   final JsonDecoder _decoder = new JsonDecoder();
 
   @override
-  Future<List<Contact>> fetchContacts() async {
-    final response = await http.get(url);
+  Future<List<User>> fetchUsers(int page) async {
+    final response =
+        await http.get(ApiEndPoint.USERS + "?per_page=8&page=$page");
     var statusCode = response.statusCode;
     var jsonBody = response.body;
 
@@ -28,9 +27,9 @@ class ContactRepositoryImpl implements ContactsRepository {
     }
 
     final contactsBody = _decoder.convert(jsonBody);
-    final List contacts = contactsBody['results'];
+    final List contacts = contactsBody['data'];
 
-    return contacts.map((contact) => new Contact.fromMap(contact)).toList();
+    return contacts.map((contact) => new User.fromJson(contact)).toList();
   }
 
   @override

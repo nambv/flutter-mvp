@@ -3,12 +3,12 @@ import 'package:flutter_mvp/model/contact.dart';
 
 class Detail extends StatelessWidget {
   static const String routeName = '/Detail';
-  final Contact contact;
+  final User user;
 
-  Detail(this.contact);
+  Detail(this.user);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: Text(contact.fullName)));
+    return Scaffold(appBar: AppBar(title: Text(user.getFullName())));
   }
 }
