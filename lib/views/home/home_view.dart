@@ -14,8 +14,6 @@ class Home extends StatelessWidget {
 }
 
 class ContactList extends StatefulWidget {
-  ContactList({Key key}) : super(key: key);
-
   @override
   ContactListState createState() {
     return ContactListState();

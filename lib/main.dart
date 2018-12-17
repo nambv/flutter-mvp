@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mvp/views/home/home_view.dart';
+import 'package:flutter_mvp/views/login/login_view.dart';
+import 'package:flutter_mvp/views/splash/splash_view.dart';
 
 void main() => runApp(MyApp());
 
@@ -11,9 +13,12 @@ class MyApp extends StatelessWidget {
         title: 'Flutter Demo',
         routes: <String, WidgetBuilder>{
           Home.routeName: (BuildContext context) {
-            return new Home();
+            return Home();
+          },
+          Login.routeName: (BuildContext context) {
+            return Login();
           }
         },
-        home: new Home());
+        home: Splash());
   }
 }
