@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_mvp/model/contact.dart';
+import 'package:flutter_mvp/model/user.dart';
 import 'package:flutter_mvp/views/detail/detail_view.dart';
-import 'package:flutter_mvp/views/home/home_contact.dart';
+import 'package:flutter_mvp/views/home/home_contract.dart';
 import 'package:flutter_mvp/views/home/home_presenter.dart';
+import 'package:flutter_mvp/views/login/login_view.dart';
 
 class Home extends StatelessWidget {
   static const String routeName = '/Home';
@@ -12,7 +13,7 @@ class Home extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(title: Text('Home')),
         drawer: createDrawerWidget(context),
-        body: ContactList());
+        body: UserList());
   }
 
   Drawer createDrawerWidget(BuildContext context) {
@@ -25,9 +26,11 @@ class Home extends StatelessWidget {
             decoration: BoxDecoration(color: Colors.blue),
           ),
           ListTile(
+            leading: Icon(Icons.exit_to_app),
             title: Text('Logout'),
             onTap: () {
-              Navigator.pop(context);
+              Navigator.of(context).pop();
+              Navigator.of(context).pushReplacementNamed(Login.routeName);
             },
           )
         ],
@@ -36,17 +39,17 @@ class Home extends StatelessWidget {
   }
 }
 
-class ContactList extends StatefulWidget {
+class UserList extends StatefulWidget {
   @override
-  ContactListState createState() {
-    return ContactListState();
+  UserListState createState() {
+    return UserListState();
   }
 }
 
-class ContactListState extends State<ContactList> implements HomeContact {
+class UserListState extends State<UserList> implements HomeContract {
   HomePresenter _presenter;
   int _page;
-  List<User> _contacts;
+  List<User> _users;
   bool _isLoading = false;
   ScrollController scrollController;
 
@@ -57,7 +60,7 @@ class ContactListState extends State<ContactList> implements HomeContact {
     }
   }
 
-  ContactListState() {
+  UserListState() {
     _presenter = new HomePresenter(this);
   }
 
@@ -66,7 +69,7 @@ class ContactListState extends State<ContactList> implements HomeContact {
     super.initState();
     scrollController = new ScrollController()..addListener(_scrollListener);
     _page = 1;
-    _contacts = List<User>();
+    _users = List<User>();
     _isLoading = true;
     _presenter.loadUsers(_page);
   }
@@ -81,32 +84,32 @@ class ContactListState extends State<ContactList> implements HomeContact {
               padding: const EdgeInsets.only(left: 16.0, right: 16.0),
               child: new CircularProgressIndicator()));
     } else {
-      widget = new ListView(
+      widget = ListView.builder(
           controller: scrollController,
           padding: new EdgeInsets.symmetric(vertical: 8.0),
-          children:
-              ListTile.divideTiles(context: context, tiles: _buildContactList())
-                  .toList());
+          itemCount: _users.length,
+          itemBuilder: (context, index) {
+            return _buildUserItem(index);
+          });
     }
 
     return widget;
   }
 
-  Iterable<ContactItem> _buildContactList() {
-    return _contacts.map((contact) => new ContactItem(
-          contact: contact,
-          onTap: () {
-            print("Item clicked: ${contact.avatar}");
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => Detail(contact)));
-          },
-        ));
+  UserItem _buildUserItem(int index) {
+    return UserItem(
+        user: _users[index],
+        onTap: () {
+          print("Item clicked: ${_users[index].avatar}");
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => Detail(_users[index])));
+        });
   }
 
   @override
-  void onContactsReceived(List<User> contacts) {
-    if (contacts.length > 0) {
-      _contacts.addAll(contacts);
+  void onUsersReceived(List<User> users) {
+    if (users.length > 0) {
+      _users.addAll(users);
     }
 
     setState(() {
@@ -126,17 +129,17 @@ class ContactListState extends State<ContactList> implements HomeContact {
   }
 }
 
-class ContactItem extends ListTile {
-  ContactItem({User contact, GestureTapCallback onTap})
+class UserItem extends ListTile {
+  UserItem({User user, GestureTapCallback onTap})
       : super(
-            title: new Text(contact.getFullName()),
-            subtitle: new Text(contact.id.toString()),
+            title: new Text(user.getFullName()),
+            subtitle: new Text(user.id.toString()),
             leading: new Container(
                 width: 60.0,
                 height: 60.0,
                 decoration: new BoxDecoration(
                   image: new DecorationImage(
-                      image: NetworkImage(contact.avatar), fit: BoxFit.cover),
+                      image: NetworkImage(user.avatar), fit: BoxFit.cover),
                   borderRadius: new BorderRadius.all(new Radius.circular(50.0)),
                   border: new Border.all(
                     color: Colors.red,

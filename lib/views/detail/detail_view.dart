@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_mvp/model/contact.dart';
+import 'package:flutter_mvp/model/user.dart';
 
 class Detail extends StatelessWidget {
   static const String routeName = '/Detail';

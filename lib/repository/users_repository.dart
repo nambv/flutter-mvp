@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_mvp/api_endpoint.dart';
-import 'package:flutter_mvp/model/contact.dart';
+import 'package:flutter_mvp/model/user.dart';
 import 'package:flutter_mvp/util/preferences.dart';
 import 'package:flutter_mvp/util/request_exception.dart';
 import 'package:http/http.dart' as http;

@@ -65,7 +65,7 @@ class LoginFormState extends State<LoginForm> implements LoginContract {
           if (value.isEmpty) {
             return 'Password cannot be empty';
           } else {
-            if (value.length <= 6) {
+            if (value.length < 6) {
               return 'Password length must be at least 6 characters';
             }
           }
