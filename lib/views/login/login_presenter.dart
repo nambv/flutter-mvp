@@ -12,7 +12,7 @@ class LoginPresenter {
   void login(String email, String password) {
     _contactsRepository
         .login(email, password)
-        .then((empty) => _view.onLoginSuccess())
+        .then((_) => _view.onLoginSuccess())
         .catchError((onError) {
       print(onError.toString());
       _view.showError(onError.toString());
