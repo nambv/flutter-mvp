@@ -95,6 +95,7 @@ class LoginFormState extends State<LoginForm> implements LoginContract {
         color: Colors.blueAccent,
         onPressed: () {
           if (_formKey.currentState.validate()) {
+            showLoading();
             _presenter.login(_emailController.text, _passwordController.text);
           }
         },
@@ -115,13 +116,29 @@ class LoginFormState extends State<LoginForm> implements LoginContract {
     super.dispose();
   }
 
+  void showLoading() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              content: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                CircularProgressIndicator(),
+                Text("Logging in...", textAlign: TextAlign.center)
+              ]));
+        });
+  }
+
   @override
   void onLoginSuccess() {
+    Navigator.of(context).pop();
     Navigator.of(context).pushReplacementNamed(Home.routeName);
   }
 
   @override
   void showError(String message) {
+    Navigator.of(context).pop();
     print(message);
   }
 
