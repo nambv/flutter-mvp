@@ -63,7 +63,8 @@ class ContactListState extends State<ContactList> implements HomeContact {
           contact: contact,
           onTap: () {
             print("Item clicked: ${contact.imageUrl}");
-            Navigator.pushNamed(context, Detail.routeName);
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => Detail(contact)));
           },
         ));
   }
