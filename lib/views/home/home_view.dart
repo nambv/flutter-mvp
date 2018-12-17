@@ -45,9 +45,17 @@ class ContactList extends StatefulWidget {
 
 class ContactListState extends State<ContactList> implements HomeContact {
   HomePresenter _presenter;
-  int page;
+  int _page;
   List<User> _contacts;
   bool _isLoading = false;
+  ScrollController scrollController;
+
+  void _scrollListener() {
+    print(scrollController.position.extentAfter);
+    if (scrollController.position.extentAfter == 0) {
+      _presenter.loadUsers(++_page);
+    }
+  }
 
   ContactListState() {
     _presenter = new HomePresenter(this);
@@ -56,9 +64,11 @@ class ContactListState extends State<ContactList> implements HomeContact {
   @override
   void initState() {
     super.initState();
-    page = 1;
+    scrollController = new ScrollController()..addListener(_scrollListener);
+    _page = 1;
+    _contacts = List<User>();
     _isLoading = true;
-    _presenter.loadUsers(page);
+    _presenter.loadUsers(_page);
   }
 
   @override
@@ -72,6 +82,7 @@ class ContactListState extends State<ContactList> implements HomeContact {
               child: new CircularProgressIndicator()));
     } else {
       widget = new ListView(
+          controller: scrollController,
           padding: new EdgeInsets.symmetric(vertical: 8.0),
           children:
               ListTile.divideTiles(context: context, tiles: _buildContactList())
@@ -94,8 +105,11 @@ class ContactListState extends State<ContactList> implements HomeContact {
 
   @override
   void onContactsReceived(List<User> contacts) {
+    if (contacts.length > 0) {
+      _contacts.addAll(contacts);
+    }
+
     setState(() {
-      _contacts = contacts;
       _isLoading = false;
     });
   }
@@ -103,6 +117,12 @@ class ContactListState extends State<ContactList> implements HomeContact {
   @override
   void showError(String message) {
     print(message);
+  }
+
+  @override
+  void dispose() {
+    scrollController.removeListener(_scrollListener);
+    super.dispose();
   }
 }
 

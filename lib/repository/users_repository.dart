@@ -6,12 +6,12 @@ import 'package:flutter_mvp/util/preferences.dart';
 import 'package:flutter_mvp/util/request_exception.dart';
 import 'package:http/http.dart' as http;
 
-abstract class ContactsRepository {
+abstract class UsersRepository {
   Future<List<User>> fetchUsers(int page);
   Future<void> login(String email, String password);
 }
 
-class ContactRepositoryImpl implements ContactsRepository {
+class UsersRepositoryImpl implements UsersRepository {
   final JsonDecoder _decoder = new JsonDecoder();
 
   @override

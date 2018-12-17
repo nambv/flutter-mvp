@@ -3,10 +3,10 @@ import 'package:flutter_mvp/views/login/login_contract.dart';
 
 class LoginPresenter {
   LoginContract _view;
-  ContactsRepository _contactsRepository;
+  UsersRepository _contactsRepository;
 
   LoginPresenter(this._view) {
-    _contactsRepository = ContactRepositoryImpl();
+    _contactsRepository = UsersRepositoryImpl();
   }
 
   void login(String email, String password) {
