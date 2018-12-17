@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mvp/views/home/home_view.dart';
+import 'package:flutter_mvp/views/login/login_contract.dart';
+import 'package:flutter_mvp/views/login/login_presenter.dart';
 
 class Login extends StatelessWidget {
   static String routeName = "/Login";
@@ -19,8 +22,108 @@ class LoginForm extends StatefulWidget {
   }
 }
 
-class LoginFormState extends State<LoginForm> {
+class LoginFormState extends State<LoginForm> implements LoginContract {
   final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  LoginPresenter _presenter;
+
+  Widget createEmailTextField() {
+    return Container(
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 30.0),
+            child: TextFormField(
+              controller: _emailController,
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Email cannot be empty';
+                } else {
+                  return validateEmail(value);
+                }
+              },
+              maxLines: 1,
+              decoration: InputDecoration(
+                hintText: "Enter your email",
+                labelText: "Email",
+              ),
+            ),
+          )
+        ]));
+  }
+
+  Widget createPasswordField() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 30.0),
+      child: TextFormField(
+        controller: _passwordController,
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'Password cannot be empty';
+          } else {
+            if (value.length <= 6) {
+              return 'Password length must be at least 6 characters';
+            }
+          }
+        },
+        keyboardType: TextInputType.emailAddress,
+        maxLines: 1,
+        obscureText: true,
+        decoration: InputDecoration(
+          hintText: "Enter your password",
+          labelText: "Password",
+        ),
+      ),
+    );
+  }
+
+  Widget createSignInButton(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 30.0),
+      width: double.infinity,
+      child: RaisedButton(
+        padding: EdgeInsets.all(12.0),
+        shape: StadiumBorder(),
+        child: Text(
+          "SIGN IN",
+          style: TextStyle(color: Colors.white),
+        ),
+        color: Colors.blueAccent,
+        onPressed: () {
+          if (_formKey.currentState.validate()) {
+            _presenter.login(_emailController.text, _passwordController.text);
+          }
+        },
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _presenter = LoginPresenter(this);
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void onLoginSuccess() {
+    Navigator.of(context).pushReplacementNamed(Home.routeName);
+  }
+
+  @override
+  void showError(String message) {
+    print(message);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +159,7 @@ class LoginFormState extends State<LoginForm> {
               createEmailTextField(),
               createPasswordField(),
               SizedBox(height: 12.0),
-              createSignInButton(context, _formKey),
+              createSignInButton(context),
               Text(
                 "SIGN UP FOR AN ACCOUNT",
                 style: TextStyle(color: Colors.grey),
@@ -84,76 +187,4 @@ String validateEmail(String value) {
     return 'Enter Valid Email';
   else
     return null;
-}
-
-Widget createEmailTextField() {
-  return Container(
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-        Container(
-          padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 30.0),
-          child: TextFormField(
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'Email cannot be empty';
-              } else {
-                return validateEmail(value);
-              }
-            },
-            maxLines: 1,
-            decoration: InputDecoration(
-              hintText: "Enter your email",
-              labelText: "Email",
-            ),
-          ),
-        )
-      ]));
-}
-
-Widget createPasswordField() {
-  return Container(
-    padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 30.0),
-    child: TextFormField(
-      validator: (value) {
-        if (value.isEmpty) {
-          return 'Password cannot be empty';
-        } else {
-          if (value.length <= 6) {
-            return 'Password length must be at least 6 characters';
-          }
-        }
-      },
-      keyboardType: TextInputType.emailAddress,
-      maxLines: 1,
-      obscureText: true,
-      decoration: InputDecoration(
-        hintText: "Enter your password",
-        labelText: "Password",
-      ),
-    ),
-  );
-}
-
-Widget createSignInButton(BuildContext context, GlobalKey<FormState> formKey) {
-  return Container(
-    padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 30.0),
-    width: double.infinity,
-    child: RaisedButton(
-      padding: EdgeInsets.all(12.0),
-      shape: StadiumBorder(),
-      child: Text(
-        "SIGN IN",
-        style: TextStyle(color: Colors.white),
-      ),
-      color: Colors.blueAccent,
-      onPressed: () {
-        if (formKey.currentState.validate()) {
-          Scaffold.of(context)
-              .showSnackBar(SnackBar(content: Text('Processing Data')));
-        }
-      },
-    ),
-  );
 }

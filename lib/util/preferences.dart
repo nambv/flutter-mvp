@@ -10,7 +10,7 @@ class Preferences {
     return prefs.getString(_token);
   }
 
-  void setToken(String token) async {
+  static void setToken(String token) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(_token, token);
   }
