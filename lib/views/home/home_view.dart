@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_mvp/model/user.dart';
 import 'package:flutter_mvp/views/detail/detail_view.dart';
@@ -21,15 +23,28 @@ class Home extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          DrawerHeader(
-            child: Text('Drawer Header'),
-            decoration: BoxDecoration(color: Colors.blue),
+          UserAccountsDrawerHeader(
+            accountName: new Text(
+              "Nam Bui Vu",
+              style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
+            ),
+            accountEmail: new Text(
+              "nambuivu@gmail.com",
+              style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
+            ),
+            currentAccountPicture: new CircleAvatar(
+                backgroundImage: new NetworkImage(
+                    'https://s3.amazonaws.com/uifaces/faces/twitter/olegpogodaev/128.jpg')),
+            decoration: BoxDecoration(
+                image: new DecorationImage(
+                    image: NetworkImage(
+                        "https://cdn.hipwallpaper.com/i/54/15/rWvKjQ.jpg"),
+                    fit: BoxFit.cover)),
           ),
           ListTile(
             leading: Icon(Icons.exit_to_app),
             title: Text('Logout'),
             onTap: () {
-              Navigator.of(context).pop();
               Navigator.of(context).pushReplacementNamed(Login.routeName);
             },
           )
@@ -51,11 +66,13 @@ class UserListState extends State<UserList> implements HomeContract {
   int _page;
   List<User> _users;
   bool _isLoading = false;
-  ScrollController scrollController;
+  bool _isRefreshing = false;
+  ScrollController _scrollController;
+  Completer<Null> _completer;
 
   void _scrollListener() {
-    print(scrollController.position.extentAfter);
-    if (scrollController.position.extentAfter == 0) {
+    print(_scrollController.position.extentAfter);
+    if (_scrollController.position.extentAfter == 0) {
       _presenter.loadUsers(++_page);
     }
   }
@@ -67,13 +84,22 @@ class UserListState extends State<UserList> implements HomeContract {
   @override
   void initState() {
     super.initState();
-    scrollController = new ScrollController()..addListener(_scrollListener);
+    _scrollController = new ScrollController()..addListener(_scrollListener);
     _page = 1;
     _users = List<User>();
     _isLoading = true;
     _presenter.loadUsers(_page);
   }
 
+  Future<Null> onRefresh() {
+    _completer = new Completer<Null>();
+    _isRefreshing = true;
+    _page = 1;
+    _presenter.loadUsers(_page);
+    return _completer.future;
+  }
+
+  /// This method is rerun every time setState is called.
   @override
   Widget build(BuildContext context) {
     var widget;
@@ -84,13 +110,15 @@ class UserListState extends State<UserList> implements HomeContract {
               padding: const EdgeInsets.only(left: 16.0, right: 16.0),
               child: new CircularProgressIndicator()));
     } else {
-      widget = ListView.builder(
-          controller: scrollController,
-          padding: new EdgeInsets.symmetric(vertical: 8.0),
-          itemCount: _users.length,
-          itemBuilder: (context, index) {
-            return _buildUserItem(index);
-          });
+      widget = new RefreshIndicator(
+          child: ListView.builder(
+              controller: _scrollController,
+              padding: new EdgeInsets.symmetric(vertical: 8.0),
+              itemCount: _users.length,
+              itemBuilder: (context, index) {
+                return _buildUserItem(index);
+              }),
+          onRefresh: onRefresh);
     }
 
     return widget;
@@ -108,6 +136,12 @@ class UserListState extends State<UserList> implements HomeContract {
 
   @override
   void onUsersReceived(List<User> users) {
+    if (_isRefreshing) {
+      _users.clear();
+      _completer.complete(null);
+      _isRefreshing = false;
+    }
+
     if (users.length > 0) {
       _users.addAll(users);
     }
@@ -124,7 +158,7 @@ class UserListState extends State<UserList> implements HomeContract {
 
   @override
   void dispose() {
-    scrollController.removeListener(_scrollListener);
+    _scrollController.removeListener(_scrollListener);
     super.dispose();
   }
 }
