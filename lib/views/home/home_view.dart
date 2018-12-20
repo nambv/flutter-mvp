@@ -7,18 +7,34 @@ import 'package:flutter_mvp/views/home/home_contract.dart';
 import 'package:flutter_mvp/views/home/home_presenter.dart';
 import 'package:flutter_mvp/views/login/login_view.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   static const String routeName = '/Home';
+
+  @override
+  State<StatefulWidget> createState() {
+    return HomeState();
+  }
+}
+
+class HomeState extends State<Home> {
+  int _currentIndex = 0;
+
+  void onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: Text('Home')),
-        drawer: createDrawerWidget(context),
-        body: UserList());
+        drawer: setupDrawerWidget(context),
+        body: UserList(),
+        bottomNavigationBar: setupBottomNavigationBar());
   }
 
-  Drawer createDrawerWidget(BuildContext context) {
+  Drawer setupDrawerWidget(BuildContext context) {
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -50,6 +66,21 @@ class Home extends StatelessWidget {
           )
         ],
       ),
+    );
+  }
+
+  BottomNavigationBar setupBottomNavigationBar() {
+    return BottomNavigationBar(
+      onTap: onTabTapped, // new
+      currentIndex: _currentIndex,
+      items: [
+        BottomNavigationBarItem(
+            icon: new Icon(Icons.home), title: new Text('Home')),
+        BottomNavigationBarItem(
+            icon: new Icon(Icons.mail), title: new Text('Messages')),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.person), title: Text('Profile'))
+      ],
     );
   }
 }
