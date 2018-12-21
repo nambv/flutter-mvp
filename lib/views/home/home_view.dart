@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mvp/views/login/login_view.dart';
 import 'package:flutter_mvp/views/place_holder.dart';
-import 'package:flutter_mvp/views/users/users_view.dart';
+import 'package:shimmer/shimmer.dart';
 
 class Home extends StatefulWidget {
   static const String routeName = '/Home';
@@ -15,7 +15,64 @@ class Home extends StatefulWidget {
 class HomeState extends State<Home> {
   int _currentIndex = 0;
   final List<Widget> _children = [
-    UserList(),
+    Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey[300],
+        highlightColor: Colors.grey[100],
+        child: Column(
+          children: [0, 1, 2, 3, 4, 5, 6]
+              .map((_) => Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 48.0,
+                          height: 48.0,
+                          color: Colors.white,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: double.infinity,
+                                height: 16.0,
+                                color: Colors.white,
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 2.0),
+                              ),
+                              Container(
+                                width: double.infinity,
+                                height: 16.0,
+                                color: Colors.white,
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 2.0),
+                              ),
+                              Container(
+                                width: 64.0,
+                                height: 16.0,
+                                color: Colors.white,
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ))
+              .toList(),
+        ),
+      ),
+    ),
     PlaceholderWidget(Colors.deepOrange),
     PlaceholderWidget(Colors.green),
   ];
