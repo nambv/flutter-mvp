@@ -128,12 +128,10 @@ class UserListState extends State<UserList> implements UsersContract {
           itemBuilder: (context, index) {
             return _buildUserItem(index);
           }),
-    ];
-
-    if (_isLoadMore) {
-      views.add(
-        Align(
-          alignment: Alignment.bottomCenter,
+      Align(
+        alignment: Alignment.bottomCenter,
+        child: Opacity(
+          opacity: _isLoadMore ? 1.0 : 0.0,
           child: Container(
             width: double.infinity,
             height: 56.0,
@@ -142,8 +140,8 @@ class UserListState extends State<UserList> implements UsersContract {
             child: Center(child: CircularProgressIndicator()),
           ),
         ),
-      );
-    }
+      ),
+    ];
 
     return Stack(
       children: views,
