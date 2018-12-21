@@ -5,6 +5,7 @@ import 'package:flutter_mvp/model/user.dart';
 import 'package:flutter_mvp/views/detail/detail_view.dart';
 import 'package:flutter_mvp/views/users/users_contract.dart';
 import 'package:flutter_mvp/views/users/users_presenter.dart';
+import 'package:shimmer/shimmer.dart';
 
 class UserList extends StatefulWidget {
   @override
@@ -19,12 +20,16 @@ class UserListState extends State<UserList> implements UsersContract {
   List<User> _users;
   bool _isLoading = false;
   bool _isRefreshing = false;
+  bool _isLoadMore = false;
   ScrollController _scrollController;
   Completer<Null> _completer;
 
   void _scrollListener() {
     print(_scrollController.position.extentAfter);
     if (_scrollController.position.extentAfter == 0) {
+      setState(() {
+        _isLoadMore = true;
+      });
       _presenter.loadUsers(++_page);
     }
   }
@@ -51,29 +56,115 @@ class UserListState extends State<UserList> implements UsersContract {
     return _completer.future;
   }
 
+  Widget setupShimmerWidget() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey[300],
+        highlightColor: Colors.grey[100],
+        child: Column(
+          children: new List<int>.generate(7, (i) => i + 1)
+              .map((_) => Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                            width: 60.0,
+                            height: 60.0,
+                            decoration: new BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white,
+                            )),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: double.infinity,
+                                height: 16.0,
+                                color: Colors.white,
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 2.0),
+                              ),
+                              Container(
+                                width: double.infinity,
+                                height: 16.0,
+                                color: Colors.white,
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 2.0),
+                              ),
+                              Container(
+                                width: 64.0,
+                                height: 16.0,
+                                color: Colors.white,
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ))
+              .toList(),
+        ),
+      ),
+    );
+  }
+
+  Widget setupListViewWidget() {
+    List<Widget> views = <Widget>[
+      ListView.builder(
+          controller: _scrollController,
+          padding: new EdgeInsets.symmetric(vertical: 8.0),
+          itemCount: _users.length,
+          itemBuilder: (context, index) {
+            return _buildUserItem(index);
+          }),
+    ];
+
+    if (_isLoadMore) {
+      views.add(
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            width: double.infinity,
+            height: 56.0,
+            padding: EdgeInsets.symmetric(vertical: 8.0),
+            color: Colors.white,
+            child: Center(child: CircularProgressIndicator()),
+          ),
+        ),
+      );
+    }
+
+    return Stack(
+      children: views,
+    );
+  }
+
   /// This method is rerun every time setState is called.
   @override
   Widget build(BuildContext context) {
-    var widget;
+    var containerWidget;
 
     if (_isLoading) {
-      widget = new Center(
-          child: new Padding(
-              padding: const EdgeInsets.only(left: 16.0, right: 16.0),
-              child: new CircularProgressIndicator()));
+      containerWidget = setupShimmerWidget();
     } else {
-      widget = new RefreshIndicator(
-          child: ListView.builder(
-              controller: _scrollController,
-              padding: new EdgeInsets.symmetric(vertical: 8.0),
-              itemCount: _users.length,
-              itemBuilder: (context, index) {
-                return _buildUserItem(index);
-              }),
-          onRefresh: onRefresh);
+      containerWidget = setupListViewWidget();
     }
 
-    return widget;
+    return new RefreshIndicator(
+      child: containerWidget,
+      onRefresh: onRefresh,
+    );
   }
 
   UserItem _buildUserItem(int index) {
@@ -101,6 +192,9 @@ class UserListState extends State<UserList> implements UsersContract {
     }
 
     setState(() {
+      if (_isLoadMore) {
+        _isLoadMore = false;
+      }
       _isLoading = false;
     });
   }
