@@ -16,8 +16,8 @@ class UsersRepositoryImpl implements UsersRepository {
 
   @override
   Future<List<User>> fetchUsers(int page) async {
-    final response =
-        await http.get(ApiEndPoint.USERS + "?per_page=8&page=$page");
+    final response = await http.get(ApiEndPoint.RANDOM_USERS +
+        "?page=$page&results=10&inc=name,email,gender,picture,location,phone");
     var statusCode = response.statusCode;
     var jsonBody = response.body;
 
@@ -27,7 +27,7 @@ class UsersRepositoryImpl implements UsersRepository {
     }
 
     final contactsBody = _decoder.convert(jsonBody);
-    final List contacts = contactsBody['data'];
+    final List contacts = contactsBody['results'];
 
     return contacts.map((contact) => new User.fromJson(contact)).toList();
   }

@@ -9,7 +9,7 @@ class Injector {
 
   Injector._internal();
 
-  UsersRepository get contactsRepository {
+  UsersRepository get usersRepository {
     return new UsersRepositoryImpl();
   }
 }
