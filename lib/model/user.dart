@@ -1,4 +1,5 @@
 class User {
+  String id;
   String gender;
   Name name;
   Location location;
@@ -7,6 +8,7 @@ class User {
   Picture picture;
 
   User({
+    this.id,
     this.gender,
     this.name,
     this.location,
@@ -16,6 +18,7 @@ class User {
   });
 
   User.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
     gender = json['gender'];
     name = json['name'] != null ? new Name.fromJson(json['name']) : null;
     location = json['location'] != null
@@ -29,6 +32,7 @@ class User {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
     data['gender'] = this.gender;
     if (this.name != null) {
       data['name'] = this.name.toJson();

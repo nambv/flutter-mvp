@@ -55,7 +55,7 @@ class HomeState extends State<Home> {
             decoration: BoxDecoration(
                 image: new DecorationImage(
                     image: NetworkImage(
-                        "https://cdn.hipwallpaper.com/i/54/15/rWvKjQ.jpg"),
+                        "https://hsto.org/files/87c/913/f5f/87c913f5fa3a4d4c807efbcccfa047f7.jpg"),
                     fit: BoxFit.cover)),
           ),
           ListTile(

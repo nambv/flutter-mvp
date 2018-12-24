@@ -134,10 +134,15 @@ class UserListState extends State<UserList> implements UsersContract {
           opacity: _isLoadMore ? 1.0 : 0.0,
           child: Container(
             width: double.infinity,
-            height: 56.0,
-            padding: EdgeInsets.symmetric(vertical: 8.0),
+            height: 42.0,
+            padding: EdgeInsets.symmetric(vertical: 4.0),
             color: Colors.white,
-            child: Center(child: CircularProgressIndicator()),
+            child: Center(
+                child: SizedBox(
+              child: CircularProgressIndicator(strokeWidth: 3.0),
+              height: 20.0,
+              width: 20.0,
+            )),
           ),
         ),
       ),
