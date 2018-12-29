@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Preferences {
@@ -10,8 +11,9 @@ class Preferences {
     return prefs.getString(_token);
   }
 
-  static void setToken(String token) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(_token, token);
+  static Observable<void> setToken(String token) {
+    return Observable.fromFuture(SharedPreferences.getInstance()).map((prefs) {
+      return prefs.setString(_token, token);
+    });
   }
 }

@@ -1,17 +1,22 @@
 import 'dart:convert';
 
 import 'package:flutter_mvp/api_endpoint.dart';
+import 'package:flutter_mvp/di/injection.dart';
 import 'package:flutter_mvp/model/user.dart';
+import 'package:flutter_mvp/service/network_service.dart';
 import 'package:flutter_mvp/util/preferences.dart';
 import 'package:flutter_mvp/util/request_exception.dart';
 import 'package:http/http.dart' as http;
+import 'package:rxdart/rxdart.dart';
 
 abstract class UsersRepository {
   Future<List<User>> fetchUsers(int page);
-  Future<void> login(String email, String password);
+
+  Observable<void> login(String email, String password);
 }
 
 class UsersRepositoryImpl implements UsersRepository {
+  final NetworkService _networkService = Injector().networkService;
   final JsonDecoder _decoder = new JsonDecoder();
 
   @override
@@ -33,20 +38,18 @@ class UsersRepositoryImpl implements UsersRepository {
   }
 
   @override
-  Future<void> login(String email, String password) async {
+  Observable<void> login(String email, String password) {
     Map data = {'email': email, 'password': password};
 
-    final response = await http.post(ApiEndPoint.LOGIN, body: data);
-    var statusCode = response.statusCode;
-    var jsonBody = response.body;
+    return Observable.fromFuture(_networkService.post(ApiEndPoint.LOGIN, data))
+        .flatMap((res) {
+      if (res.statusCode != 200 || null == res.statusCode) {
+        throw new RequestException(
+            "Login error, code: ${res.statusCode}, ${res.reasonPhrase}");
+      }
 
-    if (statusCode != 200 || null == statusCode) {
-      throw new RequestException(
-          "Login error, code: $statusCode, ${response.reasonPhrase}");
-    }
-
-    final String token = _decoder.convert(jsonBody)['token'];
-    await Preferences.setToken(token);
-    return;
+      final String token = _networkService.convertJsonToMap(res.body)["token"];
+      return Preferences.setToken(token);
+    });
   }
 }

@@ -139,7 +139,7 @@ class LoginFormState extends State<LoginForm> implements LoginContract {
   @override
   void showError(String message) {
     Navigator.of(context).pop();
-    print(message);
+    print("Error: $message");
   }
 
   @override

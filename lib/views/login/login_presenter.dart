@@ -10,12 +10,10 @@ class LoginPresenter {
   }
 
   void login(String email, String password) {
-    _contactsRepository
-        .login(email, password)
-        .then((_) => _view.onLoginSuccess())
-        .catchError((onError) {
-      // TODO: Handle onError exception
-      _view.showError(onError.toString());
+    _contactsRepository.login(email, password).listen((_) {
+      _view.onLoginSuccess();
+    }).onError((exception) {
+      _view.showError(exception);
     });
   }
 }

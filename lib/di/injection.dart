@@ -1,4 +1,5 @@
 import 'package:flutter_mvp/repository/users_repository.dart';
+import 'package:flutter_mvp/service/network_service.dart';
 
 class Injector {
   static final Injector _singleton = new Injector._internal();
@@ -11,5 +12,9 @@ class Injector {
 
   UsersRepository get usersRepository {
     return new UsersRepositoryImpl();
+  }
+
+  NetworkService get networkService {
+    return new NetworkService();
   }
 }
