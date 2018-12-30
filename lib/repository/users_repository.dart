@@ -4,7 +4,6 @@ import 'package:flutter_mvp/api_endpoint.dart';
 import 'package:flutter_mvp/di/injection.dart';
 import 'package:flutter_mvp/model/user.dart';
 import 'package:flutter_mvp/service/network_service.dart';
-import 'package:flutter_mvp/util/preferences.dart';
 import 'package:flutter_mvp/util/request_exception.dart';
 import 'package:http/http.dart' as http;
 import 'package:rxdart/rxdart.dart';
@@ -48,8 +47,8 @@ class UsersRepositoryImpl implements UsersRepository {
             "Login error, code: ${res.statusCode}, ${res.reasonPhrase}");
       }
 
-      final String token = _networkService.convertJsonToMap(res.body)["token"];
-      return Preferences.setToken(token);
+//      final String token = _networkService.convertJsonToMap(res.body)["token"];
+//      return Preferences.setToken(token);
     });
   }
 }

@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_mvp/util/preferences.dart';
-import 'package:flutter_mvp/views/home/home_view.dart';
 import 'package:flutter_mvp/views/login/login_view.dart';
 
 class Splash extends StatefulWidget {
@@ -25,11 +23,11 @@ class SplashState extends State<Splash> {
   }
 
   void navigationPage() async {
-    String token = await Preferences.getToken();
-    if (null == token || token.isEmpty)
-      Navigator.of(context).pushReplacementNamed(Login.routeName);
-    else
-      Navigator.of(context).pushReplacementNamed(Home.routeName);
+//    String token = await Preferences.getToken();
+//    if (null == token || token.isEmpty)
+    Navigator.of(context).pushReplacementNamed(Login.routeName);
+//    else
+//      Navigator.of(context).pushReplacementNamed(Home.routeName);
   }
 
   @override
