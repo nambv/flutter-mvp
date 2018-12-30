@@ -73,3 +73,4 @@ build/
 android/app/src/main/java/
 gen/
 ios/Frameworks/
+/ios/Runner/GoogleService-Info.plist
