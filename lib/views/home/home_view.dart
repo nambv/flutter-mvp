@@ -1,7 +1,6 @@
-import 'dart:io';
-
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mvp/views/home/home_contract.dart';
+import 'package:flutter_mvp/views/home/home_presenter.dart';
 import 'package:flutter_mvp/views/login/login_view.dart';
 import 'package:flutter_mvp/views/place_holder.dart';
 import 'package:flutter_mvp/views/users/users_view.dart';
@@ -15,8 +14,8 @@ class Home extends StatefulWidget {
   }
 }
 
-class HomeState extends State<Home> {
-  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+class HomeState extends State<Home> implements HomeContract {
+  HomePresenter _presenter;
   int _currentIndex = 0;
   final List<Widget> _children = [
     UserList(),
@@ -33,36 +32,7 @@ class HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    firebaseCloudMessagingListeners();
-  }
-
-  void firebaseCloudMessagingListeners() {
-    if (Platform.isIOS) iOSPermission();
-
-    _firebaseMessaging.getToken().then((token) {
-      print(token);
-    });
-
-    _firebaseMessaging.configure(
-      onMessage: (Map<String, dynamic> message) async {
-        print('on message received: $message');
-      },
-      onResume: (Map<String, dynamic> message) async {
-        print('on resume $message');
-      },
-      onLaunch: (Map<String, dynamic> message) async {
-        print('on launch $message');
-      },
-    );
-  }
-
-  void iOSPermission() {
-    _firebaseMessaging.requestNotificationPermissions(
-        IosNotificationSettings(sound: true, badge: true, alert: true));
-    _firebaseMessaging.onIosSettingsRegistered
-        .listen((IosNotificationSettings settings) {
-      print("Settings registered: $settings");
-    });
+    _presenter = HomePresenter(this);
   }
 
   @override
@@ -101,7 +71,7 @@ class HomeState extends State<Home> {
             leading: Icon(Icons.exit_to_app),
             title: Text('Logout'),
             onTap: () {
-              Navigator.of(context).pushReplacementNamed(Login.routeName);
+              _presenter.logout();
             },
           )
         ],
@@ -123,4 +93,12 @@ class HomeState extends State<Home> {
       ],
     );
   }
+
+  @override
+  void onLoggedOut() {
+    Navigator.of(context).pushReplacementNamed(Login.routeName);
+  }
+
+  @override
+  void showError(String message) {}
 }
