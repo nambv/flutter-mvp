@@ -16,9 +16,7 @@ void main() {
 
 class MyApp extends StatefulWidget {
   @override
-  MyAppState createState() {
-    return MyAppState();
-  }
+  MyAppState createState() => MyAppState();
 }
 
 class MyAppState extends State<MyApp> {
@@ -49,7 +47,7 @@ class MyAppState extends State<MyApp> {
     if (Platform.isIOS) iOSPermission();
 
     _firebaseMessaging.getToken().then((token) {
-      print(token);
+      print("token: $token");
     });
 
     _firebaseMessaging.configure(

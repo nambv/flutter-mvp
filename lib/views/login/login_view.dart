@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter_mvp/views/home/home_view.dart';
 import 'package:flutter_mvp/views/login/login_contract.dart';
 import 'package:flutter_mvp/views/login/login_presenter.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:http/http.dart' as http;
 
 class Login extends StatelessWidget {
   static String routeName = "/Login";
@@ -28,6 +33,7 @@ class LoginFormState extends State<LoginForm> implements LoginContract {
   final _passwordController = TextEditingController();
 
   LoginPresenter _presenter;
+  bool isLoggedIn = false;
 
   Widget createEmailTextField() {
     return Container(
@@ -87,7 +93,6 @@ class LoginFormState extends State<LoginForm> implements LoginContract {
       width: double.infinity,
       child: RaisedButton(
         padding: EdgeInsets.all(12.0),
-        shape: StadiumBorder(),
         child: Text(
           "SIGN IN",
           style: TextStyle(color: Colors.white),
@@ -103,6 +108,29 @@ class LoginFormState extends State<LoginForm> implements LoginContract {
     );
   }
 
+  Widget createFacebookLoginButton() {
+    return Container(
+        padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 30.0),
+        width: double.infinity,
+        child: SignInButton(
+          Buttons.Facebook,
+          onPressed: () {
+            _handleFacebookLogin();
+          },
+        ));
+  }
+
+  Widget createGoogleSignInButton() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 30.0),
+      width: double.infinity,
+      child: SignInButton(
+        Buttons.Google,
+        onPressed: () {},
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -114,6 +142,38 @@ class LoginFormState extends State<LoginForm> implements LoginContract {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  void _handleFacebookLogin() async {
+    var facebookLogin = FacebookLogin();
+    var facebookLoginResult =
+        await facebookLogin.logInWithReadPermissions(['email']);
+    switch (facebookLoginResult.status) {
+      case FacebookLoginStatus.error:
+        print("Error: ${FacebookLoginStatus.error.toString()}");
+        onLoginStatusChanged(false);
+        break;
+      case FacebookLoginStatus.cancelledByUser:
+        print("Cancelled By User");
+        onLoginStatusChanged(false);
+        break;
+      case FacebookLoginStatus.loggedIn:
+        print("LoggedIn: ${facebookLoginResult.accessToken.token}");
+
+        var graphResponse = await http.get(
+            'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=${facebookLoginResult.accessToken.token}');
+        var profile = json.decode(graphResponse.body);
+        print(profile.toString());
+
+        onLoginStatusChanged(true);
+        break;
+    }
+  }
+
+  void onLoginStatusChanged(bool isLoggedIn) {
+    setState(() {
+      this.isLoggedIn = isLoggedIn;
+    });
   }
 
   void showLoading() {
@@ -177,6 +237,8 @@ class LoginFormState extends State<LoginForm> implements LoginContract {
               createPasswordField(),
               SizedBox(height: 12.0),
               createSignInButton(context),
+              createFacebookLoginButton(),
+              createGoogleSignInButton(),
               Text(
                 "SIGN UP FOR AN ACCOUNT",
                 style: TextStyle(color: Colors.grey),

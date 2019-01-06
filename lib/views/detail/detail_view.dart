@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mvp/model/user.dart';
-import 'package:flutter_mvp/styles/styles.dart';
-import 'package:flutter_mvp/views/detail/separator.dart';
-import 'package:flutter_mvp/views/detail/user_content.dart';
 
 class Detail extends StatelessWidget {
   static const String routeName = '/Detail';
@@ -12,83 +9,115 @@ class Detail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      body: new Container(
-        constraints: new BoxConstraints.expand(),
-        color: Colors.white,
-        child: new Stack(
-          children: <Widget>[
-            _getBackground(),
-            _getGradient(),
-            _getContent(),
-            _getToolbar(context),
-          ],
+    return Scaffold(
+        body: ListView(
+      children: <Widget>[
+        Image.network(
+          user.picture.large,
+          height: 240.0,
+          fit: BoxFit.cover,
         ),
-      ),
-    );
+        titleSection(),
+        buttonSection(context),
+        textSection(),
+      ],
+    ));
   }
 
-  Widget _getBackground() {
-    return new Container(
-      child: new Image.network(
-        "http://images.firstcovers.com/covers/i/its_easy_if_you_try-5332.jpg",
-        fit: BoxFit.cover,
-        height: 300.0,
-      ),
-      constraints: new BoxConstraints.expand(height: 300.0),
-    );
-  }
-
-  Widget _getGradient() {
-    return new Container(
-      margin: new EdgeInsets.only(top: 190.0),
-      height: 110.0,
-      decoration: new BoxDecoration(
-        gradient: new LinearGradient(
-          colors: <Color>[new Color(0x00736AB7), new Color(0xFF736AB7)],
-          stops: [0.0, 0.9],
-          begin: const FractionalOffset(0.0, 0.0),
-          end: const FractionalOffset(0.0, 1.0),
-        ),
-      ),
-    );
-  }
-
-  Widget _getContent() {
-    return new Container(
-      child: new ListView(
-        padding: new EdgeInsets.fromLTRB(0.0, 72.0, 0.0, 32.0),
+  Widget titleSection() {
+    return Container(
+      // The entire row is in a Container and padded along each edge by 32 pixels.
+      padding: const EdgeInsets.all(32.0),
+      child: Row(
         children: <Widget>[
-          new UserContent(
-            user,
-            horizontal: false,
-          ),
-          new Container(
-            color: Colors.white,
-            padding: new EdgeInsets.symmetric(horizontal: 32.0),
-            child: new Column(
+          Expanded(
+            /**
+             * Putting a Column inside an Expanded widget stretches the column to use all remaining free space in the row.
+             * Setting the crossAxisAlignment property to CrossAxisAlignment.start positions the column at the start of the row.
+             */
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                new Text(
-                  "OVERVIEW",
-                  style: Style.headerTextStyle,
+                /**
+                 * Putting the first row of text inside a Container enables you to add padding.
+                 * The second child in the Column, also text, displays as grey.
+                 */
+                Container(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Text(
+                    'Oeschinen Lake Campground',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-                new Separator(),
-                new Text(
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent tellus ante, laoreet at nisl id, gravida tempor lacus. Morbi condimentum iaculis nulla a mollis. Pellentesque pulvinar tellus id turpis maximus, sit amet pharetra mauris imperdiet. Vivamus non condimentum justo. Curabitur eleifend elementum neque at volutpat. Pellentesque arcu lacus, tincidunt et velit nec, sollicitudin placerat lorem. Donec nec dui et nunc finibus fringilla. Sed et cursus sapien. Ut dignissim libero quis turpis rutrum rhoncus. Donec suscipit velit diam, ac consectetur nulla commodo et. Quisque venenatis nisl sed maximus scelerisque. Integer efficitur dapibus urna.\n\nDonec vitae leo eros. Nullam non massa faucibus, aliquet leo quis, faucibus diam. Vivamus non risus ut orci euismod elementum sed quis lectus. Fusce vulputate a justo vel mollis. Nullam aliquet hendrerit mauris, vel eleifend risus bibendum et. Aliquam at lacus in neque rutrum placerat. Morbi eget ultricies arcu, ut convallis ante. Aenean lobortis rhoncus iaculis.\n\nAenean mattis, magna in blandit vulputate, enim tortor gravida justo, nec faucibus metus odio at elit. Duis fermentum odio id metus scelerisque, ac dictum augue elementum. Proin eget viverra nulla. Etiam venenatis nunc eu neque varius ultricies. Praesent elementum arcu at mattis tempus. Duis quis venenatis metus. Phasellus fringilla ornare diam sed semper\n\nPellentesque id erat quis sapien ultricies sodales sed vitae ex. Fusce in egestas magna. Nunc et lectus malesuada, blandit tellus eu, molestie elit. Morbi urna augue, tempor non hendrerit id, lacinia ac mauris. Fusce in finibus risus, vitae luctus ex. Vestibulum accumsan nunc non sem consequat sagittis. Proin maximus, enim vitae pharetra commodo, ante turpis scelerisque nunc, ut laoreet quam justo eu arcu. Suspendisse pharetra erat ut mi consectetur molestie. Cras a blandit ex. Donec consequat, erat vel vehicula ultricies, ipsum libero lobortis diam, nec mollis leo arcu nec erat. Vivamus rhoncus, mauris vel eleifend sollicitudin, odio sapien accumsan tortor, quis dapibus diam erat et quam. Pellentesque ut enim a quam tincidunt congue. Maecenas et mi nec lorem varius vehicula.",
-                    style: Style.commonTextStyle),
+                Text(
+                  'Kandersteg, Switzerland',
+                  style: TextStyle(color: Colors.grey[500]),
+                )
               ],
             ),
           ),
+          /**
+           * The last two items in the title row are a star icon, painted red, and the text “41”.
+           */
+          Icon(
+            Icons.star,
+            color: Colors.red[500],
+          ),
+          Text('41')
         ],
       ),
     );
   }
 
-  Widget _getToolbar(BuildContext context) {
-    return new Container(
-      margin: new EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-      child: new BackButton(color: Colors.white),
+  Widget buttonSection(BuildContext context) {
+    Color color = Theme.of(context).primaryColor;
+    return Container(
+      child: Row(
+        // MainAxisAlignment.spaceEvenly: arrange the free space evenly before, between, and after each column
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          _buildButtonColumn(color, Icons.call, 'CALL'),
+          _buildButtonColumn(color, Icons.near_me, 'ROUTE'),
+          _buildButtonColumn(color, Icons.share, 'SHARE'),
+        ],
+      ),
+    );
+  }
+
+  Widget textSection() {
+    return Container(
+        padding: const EdgeInsets.all(32.0),
+        child: Text(
+          'Lake Oeschinen lies at the foot of the Blüemlisalp in the Bernese '
+              'Alps. Situated 1,578 meters above sea level, it is one of the '
+              'larger Alpine Lakes. A gondola ride from Kandersteg, followed by a '
+              'half-hour walk through pastures and pine forest, leads you to the '
+              'lake, which warms to 20 degrees Celsius in the summer. Activities '
+              'enjoyed here include rowing, and riding the summer toboggan run.',
+          softWrap: true,
+        ));
+  }
+
+  Column _buildButtonColumn(Color color, IconData icon, String label) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Icon(icon, color: color),
+        Container(
+          margin: const EdgeInsets.only(top: 8.0),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 12.0,
+              fontWeight: FontWeight.w400,
+              color: color,
+            ),
+          ),
+        )
+      ],
     );
   }
 }

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Flutter MVP</string>
+    <string name="facebook_app_id">401222610707838</string>
+    <string name="fb_login_protocol_scheme">fb401222610707838</string>
+</resources>

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter_mvp/api_endpoint.dart';
 import 'package:flutter_mvp/di/injection.dart';
 import 'package:flutter_mvp/model/user.dart';
@@ -52,6 +53,12 @@ class UsersRepositoryImpl implements UsersRepository {
       final String token = _networkService.convertJsonToMap(res.body)["token"];
       return Preferences.setToken(token);
     });
+  }
+
+  Future<FacebookLoginResult> handleFacebookLogin() async {
+    var facebookLogin = FacebookLogin();
+    var facebookLoginResult = facebookLogin.logInWithReadPermissions(['email']);
+    return facebookLoginResult;
   }
 
   @override
