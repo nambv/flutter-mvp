@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mvp/model/user.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Detail extends StatelessWidget {
   static const String routeName = '/Detail';
@@ -45,14 +46,14 @@ class Detail extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.only(bottom: 8.0),
                   child: Text(
-                    'Oeschinen Lake Campground',
+                    user.name.getFullName(),
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
                 Text(
-                  'Kandersteg, Switzerland',
+                  user.email,
                   style: TextStyle(color: Colors.grey[500]),
                 )
               ],
@@ -79,7 +80,7 @@ class Detail extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           _buildButtonColumn(color, Icons.call, 'CALL'),
-          _buildButtonColumn(color, Icons.near_me, 'ROUTE'),
+          _buildButtonColumn(color, Icons.location_on, 'MAP'),
           _buildButtonColumn(color, Icons.share, 'SHARE'),
         ],
       ),
@@ -105,7 +106,28 @@ class Detail extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Icon(icon, color: color),
+        IconButton(
+          icon: Icon(icon),
+          color: color,
+          onPressed: () {
+            switch (label) {
+              case 'CALL':
+                {
+                  return launch("tel:" + user.phone);
+                }
+                break;
+              case 'MAP':
+                {
+                  // TODO: Implement action open map to view location
+                }
+                break;
+              default:
+                {
+                  // TODO: Implement action share
+                }
+            }
+          },
+        ),
         Container(
           margin: const EdgeInsets.only(top: 8.0),
           child: Text(
@@ -120,4 +142,10 @@ class Detail extends StatelessWidget {
       ],
     );
   }
+
+//  requestCallPermission() async {
+//    final permission =
+//        await Permission.requestSinglePermission(PermissionName.Phone);
+//    print(permission);
+//  }
 }

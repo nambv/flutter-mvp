@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_mvp/model/user.dart';
-import 'package:flutter_mvp/views/detail/detail_view.dart';
+import 'package:flutter_mvp/views/map/map_view.dart';
 import 'package:flutter_mvp/views/users/users_contract.dart';
 import 'package:flutter_mvp/views/users/users_presenter.dart';
 import 'package:shimmer/shimmer.dart';
@@ -175,8 +175,10 @@ class UserListState extends State<UserList> implements UsersContract {
         user: _users[index],
         onTap: () {
           print("Item clicked: ${_users[index].email}");
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => Detail(_users[index])));
+          Navigator.push(
+              context,
+//              MaterialPageRoute(builder: (context) => Detail(_users[index])));
+              MaterialPageRoute(builder: (context) => MapView()));
         });
   }
 
