@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
 
 class MapView extends StatefulWidget {
   @override
@@ -9,30 +9,51 @@ class MapView extends StatefulWidget {
 
 class _MapViewState extends State<MapView> {
   GoogleMapController mapController;
-  var location = new Location();
-  Map<String, double> userLocation;
+  Geolocator geolocator = Geolocator();
+  Position userLocation;
 
-  void moveMapToLocation(Map<String, double> value) {
+  void updateLocation() {
+    getAddress().then((placemark) {
+      print(placemark[0].country);
+      print(placemark[0].position);
+      print(placemark[0].locality);
+      print(placemark[0].administrativeArea);
+      print(placemark[0].postalCode);
+      print(placemark[0].name);
+      print(placemark[0].subAdministratieArea);
+      print(placemark[0].isoCountryCode);
+      print(placemark[0].subLocality);
+      print(placemark[0].subThoroughfare);
+      print(placemark[0].thoroughfare);
+    });
     mapController?.moveCamera(
       CameraUpdate.newCameraPosition(
         CameraPosition(
-            target: LatLng(value["latitude"], value["longitude"]), zoom: 14.0),
+            target: LatLng(userLocation.latitude, userLocation.longitude),
+            zoom: 14.0),
       ),
     );
+  }
+
+  Future<List<Placemark>> getAddress() async {
+    return await Geolocator().placemarkFromCoordinates(
+        userLocation.latitude, userLocation.longitude);
   }
 
   @override
   void initState() {
     super.initState();
-    location.onLocationChanged().listen((value) async {
-//      moveMapToLocation(value);
+    _getLocation().then((value) {
+      userLocation = value;
+      updateLocation();
     });
   }
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
     _getLocation().then((value) {
-      moveMapToLocation(value);
+      userLocation = value;
+      updateLocation();
     });
   }
 
@@ -52,10 +73,11 @@ class _MapViewState extends State<MapView> {
     );
   }
 
-  Future<Map<String, double>> _getLocation() async {
-    var currentLocation = <String, double>{};
+  Future<Position> _getLocation() async {
+    var currentLocation;
     try {
-      currentLocation = await location.getLocation();
+      currentLocation = await geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.best);
     } catch (e) {
       currentLocation = null;
     }
