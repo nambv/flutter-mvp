@@ -12,7 +12,56 @@ class _MapViewState extends State<MapView> {
   Geolocator geolocator = Geolocator();
   Position userLocation;
 
-  void updateLocation() {
+  @override
+  void initState() {
+    super.initState();
+    _getLocation().then((value) {
+      userLocation = value;
+      _updateLocation();
+    });
+  }
+
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+    _getLocation().then((value) {
+      userLocation = value;
+      _updateLocation();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+          body: Stack(
+        children: <Widget>[
+          GoogleMap(
+            onMapCreated: _onMapCreated,
+            options: GoogleMapOptions(
+              cameraPosition: CameraPosition(
+                target: LatLng(37.4219999, -122.0862462),
+                zoom: 14.0,
+              ),
+              myLocationEnabled: true,
+            ),
+          ),
+          Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: FloatingActionButton(
+                  child: Icon(Icons.my_location),
+                  onPressed: () {
+                    _updateLocation();
+                  },
+                ),
+              )),
+        ],
+      )),
+    );
+  }
+
+  void _updateLocation() {
     getAddress().then((placemark) {
       print(placemark[0].country);
       print(placemark[0].position);
@@ -38,39 +87,6 @@ class _MapViewState extends State<MapView> {
   Future<List<Placemark>> getAddress() async {
     return await Geolocator().placemarkFromCoordinates(
         userLocation.latitude, userLocation.longitude);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _getLocation().then((value) {
-      userLocation = value;
-      updateLocation();
-    });
-  }
-
-  void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
-    _getLocation().then((value) {
-      userLocation = value;
-      updateLocation();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: GoogleMap(
-          onMapCreated: _onMapCreated,
-          options: GoogleMapOptions(
-            cameraPosition: CameraPosition(
-                target: LatLng(37.4219999, -122.0862462), zoom: 14.0),
-            myLocationEnabled: true,
-          ),
-        ),
-      ),
-    );
   }
 
   Future<Position> _getLocation() async {
