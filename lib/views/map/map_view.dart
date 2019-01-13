@@ -10,31 +10,30 @@ class MapView extends StatefulWidget {
 class _MapViewState extends State<MapView> {
   GoogleMapController mapController;
   var location = new Location();
-  Marker marker;
   Map<String, double> userLocation;
 
-  void updateLocation(Map<String, double> value) {}
+  void moveMapToLocation(Map<String, double> value) {
+    mapController?.moveCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+            target: LatLng(value["latitude"], value["longitude"]), zoom: 14.0),
+      ),
+    );
+  }
 
   @override
   void initState() {
     super.initState();
-    location.onLocationChanged().listen((location) async {
-      if (marker != null) {
-        mapController.removeMarker(marker);
-      }
-
-      mapController?.moveCamera(
-        CameraUpdate.newCameraPosition(
-          CameraPosition(
-              target: LatLng(location["latitude"], location["longitude"]),
-              zoom: 14.0),
-        ),
-      );
+    location.onLocationChanged().listen((value) async {
+//      moveMapToLocation(value);
     });
   }
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
+    _getLocation().then((value) {
+      moveMapToLocation(value);
+    });
   }
 
   @override
