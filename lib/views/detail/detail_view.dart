@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mvp/model/user.dart';
+import 'package:flutter_mvp/views/map/map_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Detail extends StatelessWidget {
@@ -79,9 +80,9 @@ class Detail extends StatelessWidget {
         // MainAxisAlignment.spaceEvenly: arrange the free space evenly before, between, and after each column
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          _buildButtonColumn(color, Icons.call, 'CALL'),
-          _buildButtonColumn(color, Icons.location_on, 'MAP'),
-          _buildButtonColumn(color, Icons.share, 'SHARE'),
+          _buildButtonColumn(null, color, Icons.call, 'CALL'),
+          _buildButtonColumn(context, color, Icons.location_on, 'MAP'),
+          _buildButtonColumn(null, color, Icons.share, 'SHARE'),
         ],
       ),
     );
@@ -101,7 +102,8 @@ class Detail extends StatelessWidget {
         ));
   }
 
-  Column _buildButtonColumn(Color color, IconData icon, String label) {
+  Column _buildButtonColumn(
+      BuildContext context, Color color, IconData icon, String label) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -118,7 +120,11 @@ class Detail extends StatelessWidget {
                 break;
               case 'MAP':
                 {
-                  // TODO: Implement action open map to view location
+                  return Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MapView(),
+                      ));
                 }
                 break;
               default:

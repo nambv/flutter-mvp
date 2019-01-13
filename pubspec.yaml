@@ -22,6 +22,7 @@ dependencies:
   flutter_facebook_login: ^1.1.1
   url_launcher: ^4.0.3
   google_maps_flutter: ^0.0.3+3
+  location: ^1.4.1
   flutter:
     sdk: flutter
 
