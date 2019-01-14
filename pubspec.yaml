@@ -20,10 +20,10 @@ dependencies:
   shared_preferences: ^0.4.3
   flutter_signin_button: ^0.2.4
   flutter_facebook_login: ^1.1.1
-  url_launcher: ^4.0.3
   google_maps_flutter: ^0.0.3+3
   location: ^1.4.1
-  geolocator: ^2.1.1
+  geolocator: ^2.1.0
+  permission_handler: 2.1.0
   flutter:
     sdk: flutter
 

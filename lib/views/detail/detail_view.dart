@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mvp/model/user.dart';
 import 'package:flutter_mvp/views/map/map_view.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class Detail extends StatelessWidget {
   static const String routeName = '/Detail';
@@ -115,7 +114,7 @@ class Detail extends StatelessWidget {
             switch (label) {
               case 'CALL':
                 {
-                  return launch("tel:" + user.phone);
+//                  return launch("tel:" + user.phone);
                 }
                 break;
               case 'MAP':
@@ -123,7 +122,7 @@ class Detail extends StatelessWidget {
                   return Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => MapView(),
+                        builder: (context) => MapView(user.location),
                       ));
                 }
                 break;

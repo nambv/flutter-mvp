@@ -1,8 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_mvp/model/user.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MapView extends StatefulWidget {
+  final Location destination;
+
+  MapView(this.destination);
+
   @override
   _MapViewState createState() => _MapViewState();
 }
@@ -17,51 +24,67 @@ class _MapViewState extends State<MapView> {
     super.initState();
     _getLocation().then((value) {
       userLocation = value;
-      _updateLocation();
     });
   }
 
-  void _onMapCreated(GoogleMapController controller) {
+  Future _onMapCreated(GoogleMapController controller) async {
     mapController = controller;
+    mapController?.addMarker(MarkerOptions(
+        position: LatLng(double.parse(widget.destination.coordinates.latitude),
+            double.parse(widget.destination.coordinates.longitude))));
+
     _getLocation().then((value) {
       userLocation = value;
-      _updateLocation();
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> mainView = _createViews();
+    if (Platform.isAndroid) {
+      mainView.add(createMyLocationButton());
+    }
+
     return MaterialApp(
       home: Scaffold(
-          body: Stack(
-        children: <Widget>[
-          GoogleMap(
-            onMapCreated: _onMapCreated,
-            options: GoogleMapOptions(
-              cameraPosition: CameraPosition(
-                target: LatLng(37.4219999, -122.0862462),
-                zoom: 14.0,
-              ),
-              myLocationEnabled: true,
-            ),
-          ),
-          Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Align(
-                alignment: Alignment.bottomRight,
-                child: FloatingActionButton(
-                  child: Icon(Icons.my_location),
-                  onPressed: () {
-                    _updateLocation();
-                  },
-                ),
-              )),
-        ],
-      )),
+        body: Stack(children: mainView),
+      ),
     );
   }
 
-  void _updateLocation() {
+  List<Widget> _createViews() {
+    return <Widget>[
+      GoogleMap(
+        onMapCreated: _onMapCreated,
+        options: GoogleMapOptions(
+          cameraPosition: CameraPosition(
+            target: LatLng(
+                double.parse(widget.destination.coordinates.latitude),
+                double.parse(widget.destination.coordinates.longitude)),
+            zoom: 14.0,
+          ),
+          myLocationEnabled: true,
+        ),
+      ),
+    ];
+  }
+
+  Widget createMyLocationButton() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Align(
+        alignment: Alignment.bottomRight,
+        child: FloatingActionButton(
+          child: Icon(Icons.my_location),
+          onPressed: () {
+            _moveToCurrentLocation();
+          },
+        ),
+      ),
+    );
+  }
+
+  void _moveToCurrentLocation() {
     getAddress().then((placemark) {
       print(placemark[0].country);
       print(placemark[0].position);
