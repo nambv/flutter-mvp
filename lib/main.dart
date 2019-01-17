@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_mvp/views/home/home_view.dart';
 import 'package:flutter_mvp/views/login/login_view.dart';
 import 'package:flutter_mvp/views/splash/splash_view.dart';
+import 'package:flutter_mvp/views/video_player/video_view.dart';
 
 void main() {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
@@ -38,6 +39,9 @@ class MyAppState extends State<MyApp> {
           },
           Login.routeName: (BuildContext context) {
             return Login();
+          },
+          VideoView.routeName: (BuildContext context) {
+            return VideoView();
           }
         },
         home: Splash());

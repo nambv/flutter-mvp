@@ -119,14 +119,14 @@ class UserListState extends State<UserList> implements UsersContract {
     );
   }
 
-  Widget setupListViewWidget() {
+  Widget setupListViewWidget(BuildContext context) {
     List<Widget> views = <Widget>[
       ListView.builder(
           controller: _scrollController,
           padding: new EdgeInsets.symmetric(vertical: 8.0),
           itemCount: _users.length,
           itemBuilder: (context, index) {
-            return _buildUserItem(index);
+            return _buildUserItem(index, context);
           }),
       Align(
         alignment: Alignment.bottomCenter,
@@ -161,7 +161,7 @@ class UserListState extends State<UserList> implements UsersContract {
     if (_isLoading) {
       containerWidget = setupShimmerWidget();
     } else {
-      containerWidget = setupListViewWidget();
+      containerWidget = setupListViewWidget(context);
     }
 
     return new RefreshIndicator(
@@ -170,14 +170,16 @@ class UserListState extends State<UserList> implements UsersContract {
     );
   }
 
-  UserItem _buildUserItem(int index) {
+  UserItem _buildUserItem(int index, BuildContext context) {
     return UserItem(
-        user: _users[index],
-        onTap: () {
-          print("Item clicked: ${_users[index].email}");
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => Detail(_users[index])));
-        });
+      user: _users[index],
+      onTap: () {
+        print("Item clicked: ${_users[index].email}");
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => Detail(_users[index])));
+      },
+      context: context,
+    );
   }
 
   @override
@@ -215,7 +217,7 @@ class UserListState extends State<UserList> implements UsersContract {
 }
 
 class UserItem extends ListTile {
-  UserItem({User user, GestureTapCallback onTap})
+  UserItem({User user, GestureTapCallback onTap, BuildContext context})
       : super(
             title: new Text(user.name.getFullName()),
             subtitle: new Text(user.email),
@@ -228,7 +230,7 @@ class UserItem extends ListTile {
                       fit: BoxFit.cover),
                   borderRadius: new BorderRadius.all(new Radius.circular(50.0)),
                   border: new Border.all(
-                    color: Colors.red,
+                    color: Theme.of(context).primaryColor,
                     width: 2.0,
                   ),
                 )),
