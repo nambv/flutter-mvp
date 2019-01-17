@@ -33,7 +33,7 @@ class VideoViewState extends State<VideoView> {
         children: <Widget>[
           Chewie(
             _controller,
-            aspectRatio: 3 / 2,
+            aspectRatio: 16 / 9,
             autoPlay: true,
             looping: true,
           )
@@ -43,42 +43,29 @@ class VideoViewState extends State<VideoView> {
   }
 
   @override
-  void deactivate() {
-    _controller.pause();
-    super.deactivate();
-  }
-
-  @override
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
 
   Future<void> initPlatformState() async {
+    _controller = VideoPlayerController.network("");
     try {
       FlutterYoutubeExtractor.getYoutubeMediaLink(
           youtubeLink: 'https://www.youtube.com/watch?v=Llw9Q6akRo4',
           onReceive: (link) {
             if (!mounted) return;
-
-            setState(() {
-              _outputLink = link;
-              _controller = VideoPlayerController.network(_outputLink);
-            });
+            _playVideo(link);
           });
     } on PlatformException {
       print('Failed to get Youtube Media link.');
     }
   }
 
-//  void playYoutubeVideo() {
-//    FlutterYoutube.playYoutubeVideoByUrl(
-//      apiKey: "AIzaSyDKZWodxF-QMfdxdoSwKK4fK1ZpkJ5sN3A",
-//      videoUrl: "https://www.youtube.com/watch?v=fhWaJi1Hsfo",
-//    );
-//    youtube.onVideoEnded.listen((onData) {
-//      print(onData);
-//    });
-//  }
-
+  void _playVideo(String link) {
+    setState(() {
+      _outputLink = link;
+      _controller = VideoPlayerController.network(_outputLink);
+    });
+  }
 }
