@@ -26,6 +26,7 @@ dependencies:
   permission_handler: 2.1.0
   flutter_youtube: ^1.1.4
   chewie: ^0.8.0
+  flutter_youtube_extractor: ^0.0.8
   flutter:
     sdk: flutter
 
