@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_mvp/views/detail/camera_view.dart';
 import 'package:flutter_mvp/views/home/home_view.dart';
 import 'package:flutter_mvp/views/login/login_view.dart';
 import 'package:flutter_mvp/views/splash/splash_view.dart';
@@ -42,6 +43,9 @@ class MyAppState extends State<MyApp> {
           },
           VideoView.routeName: (BuildContext context) {
             return VideoView();
+          },
+          CameraView.routeName: (BuildContext context) {
+            return CameraView();
           }
         },
         home: Splash());

@@ -1,21 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mvp/model/user.dart';
+import 'package:flutter_mvp/views/detail/camera_view.dart';
 import 'package:flutter_mvp/views/map/map_view.dart';
 import 'package:flutter_mvp/views/video_player/video_view.dart';
 
-class Detail extends StatelessWidget {
+class Detail extends StatefulWidget {
   static const String routeName = '/Detail';
   final User user;
 
   Detail(this.user);
 
   @override
+  _DetailState createState() {
+    return _DetailState();
+  }
+}
+
+class _DetailState extends State<Detail> {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: ListView(
       children: <Widget>[
         Image.network(
-          user.picture.large,
+          widget.user.picture.large,
           height: 240.0,
           fit: BoxFit.cover,
         ),
@@ -47,14 +55,14 @@ class Detail extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.only(bottom: 8.0),
                   child: Text(
-                    user.name.getFullName(),
+                    widget.user.name.getFullName(),
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
                 Text(
-                  user.email,
+                  widget.user.email,
                   style: TextStyle(color: Colors.grey[500]),
                 )
               ],
@@ -68,21 +76,6 @@ class Detail extends StatelessWidget {
             color: Colors.red[500],
           ),
           Text('41')
-        ],
-      ),
-    );
-  }
-
-  Widget buttonSection(BuildContext context) {
-    Color color = Theme.of(context).primaryColor;
-    return Container(
-      child: Row(
-        // MainAxisAlignment.spaceEvenly: arrange the free space evenly before, between, and after each column
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          _buildButtonColumn(context, color, Icons.call, 'CALL'),
-          _buildButtonColumn(context, color, Icons.location_on, 'MAP'),
-          _buildButtonColumn(context, color, Icons.share, 'SHARE'),
         ],
       ),
     );
@@ -102,6 +95,21 @@ class Detail extends StatelessWidget {
         ));
   }
 
+  Widget buttonSection(BuildContext context) {
+    Color color = Theme.of(context).primaryColor;
+    return Container(
+      child: Row(
+        // MainAxisAlignment.spaceEvenly: arrange the free space evenly before, between, and after each column
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          _buildButtonColumn(context, color, Icons.photo_camera, 'PICTURE'),
+          _buildButtonColumn(context, color, Icons.location_on, 'MAP'),
+          _buildButtonColumn(context, color, Icons.share, 'SHARE'),
+        ],
+      ),
+    );
+  }
+
   Column _buildButtonColumn(
       BuildContext context, Color color, IconData icon, String label) {
     return Column(
@@ -113,15 +121,17 @@ class Detail extends StatelessWidget {
           color: color,
           onPressed: () {
             switch (label) {
-              case 'CALL':
-                {}
+              case 'PICTURE':
+                {
+                  Navigator.of(context).pushNamed(CameraView.routeName);
+                }
                 break;
               case 'MAP':
                 {
                   return Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => MapView(user.location),
+                        builder: (context) => MapView(widget.user.location),
                       ));
                 }
                 break;
@@ -146,10 +156,4 @@ class Detail extends StatelessWidget {
       ],
     );
   }
-
-//  requestCallPermission() async {
-//    final permission =
-//        await Permission.requestSinglePermission(PermissionName.Phone);
-//    print(permission);
-//  }
 }
