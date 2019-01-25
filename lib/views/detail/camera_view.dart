@@ -3,10 +3,9 @@ import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mvp/main.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
-
-List<CameraDescription> cameras;
 
 class CameraView extends StatefulWidget {
   static String routeName = "/CameraView";
@@ -43,20 +42,6 @@ class _CameraState extends State<CameraView> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
-  void initState() {
-    initCameras();
-    super.initState();
-  }
-
-  Future initCameras() async {
-    try {
-      cameras = await availableCameras();
-    } on CameraException catch (e) {
-      logError(e.code, e.description);
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
@@ -84,17 +69,17 @@ class _CameraState extends State<CameraView> {
               ),
             ),
           ),
-          _captureControlRowWidget(),
-          Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                _cameraTogglesRowWidget(),
-                _thumbnailWidget(),
-              ],
-            ),
-          ),
+//          _captureControlRowWidget(),
+//          Padding(
+//            padding: const EdgeInsets.all(5.0),
+//            child: Row(
+//              mainAxisAlignment: MainAxisAlignment.start,
+//              children: <Widget>[
+//                _cameraTogglesRowWidget(),
+//                _thumbnailWidget(),
+//              ],
+//            ),
+//          ),
         ],
       ),
     );

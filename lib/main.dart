@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:io';
 
+import 'package:camera/camera.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,10 +11,25 @@ import 'package:flutter_mvp/views/login/login_view.dart';
 import 'package:flutter_mvp/views/splash/splash_view.dart';
 import 'package:flutter_mvp/views/video_player/video_view.dart';
 
-void main() {
+List<CameraDescription> cameras;
+
+Future<Null> main() async {
+  try {
+    cameras = await availableCameras();
+  } on CameraException catch (e) {
+    //logError(e.code, e.description);
+  }
+
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
-    runApp(MyApp());
+    availableCameras().then((value) {
+      try {
+        cameras = value;
+        runApp(MyApp());
+      } on CameraException catch (e) {
+        //logError(e.code, e.description);
+      }
+    });
   });
 }
 
